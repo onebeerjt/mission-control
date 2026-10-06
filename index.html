@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c0e">
+<title>Mission Control</title>
+<style>
+  :root {
+    --bg: #0b0c0e;
+    --card: #14161a;
+    --card-2: #1a1d22;
+    --line: #24272e;
+    --ink: #f2f3f5;
+    --muted: #9aa0ab;
+    --dim: #6b717c;
+    --live: #22c55e;
+    --building: #f59e0b;
+    --planning: #8b93a1;
+    --accent: #5ea9ff;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", sans-serif;
+    font-size: 15px; line-height: 1.5;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  }
+  a { color: var(--accent); text-decoration: none; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(11,12,14,.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: calc(14px + env(safe-area-inset-top)) 0 12px;
+  }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .brand h1 {
+    margin: 0; font-size: 22px; font-weight: 800; letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .brand h1 .dot { color: var(--building); }
+  .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+  .updated { font-size: 11px; color: var(--dim); text-align: right; line-height: 1.4; }
+  .updated button {
+    display: inline-block; margin-top: 4px;
+    background: var(--card-2); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px;
+    font-size: 12px; font-weight: 600; padding: 8px 14px; cursor: pointer;
+    min-height: 36px;
+  }
+  .updated button:active { background: var(--line); }
+
+  h2.section {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
+    color: var(--dim); margin: 26px 0 10px; font-weight: 700;
+  }
+
+  /* Activity feed */
+  .feed { list-style: none; margin: 0; padding: 0; }
+  .feed li {
+    position: relative; padding: 0 0 14px 26px; font-size: 14px;
+  }
+  .feed li::before {
+    content: ""; position: absolute; left: 7px; top: 6px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--building);
+  }
+  .feed li.live-dot::before { background: var(--live); }
+  .feed li.plan-dot::before { background: var(--planning); }
+  .feed li::after {
+    content: ""; position: absolute; left: 10.5px; top: 18px; bottom: -2px;
+    width: 1px; background: var(--line);
+  }
+  .feed li:last-child::after { display: none; }
+  .feed .t { color: var(--dim); font-size: 12px; display: block; margin-top: 1px; }
+
+  /* Project cards */
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+  }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .card h3 { margin: 0; font-size: 17px; font-weight: 700; }
+  .card .desc { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+  .badge {
+    flex-shrink: 0; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; padding: 5px 10px; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .badge.live { color: var(--live); background: rgba(34,197,94,.12); }
+  .badge.building { color: var(--building); background: rgba(245,158,11,.12); }
+  .badge.planning { color: var(--planning); background: rgba(139,147,161,.14); }
+  .meta { margin-top: 12px; display: grid; gap: 8px; }
+  .meta .row { display: flex; gap: 8px; font-size: 13.5px; align-items: baseline; }
+  .meta .k {
+    flex-shrink: 0; width: 74px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--dim); font-weight: 700; padding-top: 2px;
+  }
+  .meta .v { color: var(--ink); }
+  .meta .v.dim { color: var(--muted); }
+  .links { display: flex; gap: 8px; margin-top: 14px; }
+  .links a {
+    flex: 1; text-align: center;
+    background: var(--card-2); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 10px; padding: 12px 8px; font-size: 14px; font-weight: 600;
+    min-height: 48px; display: flex; align-items: center; justify-content: center;
+  }
+  .links a:active { background: var(--line); }
+  .links a.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  footer { margin-top: 28px; text-align: center; font-size: 12px; color: var(--dim); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Mission<span class="dot">·</span>Control</h1>
+      <p>Marino's project dashboard</p>
+    </div>
+    <div class="updated">
+      <span id="updated-at">—</span><br>
+      <button id="refresh" type="button">↻ Refresh</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <h2 class="section">Recent activity</h2>
+  <ul class="feed" id="feed"></ul>
+
+  <h2 class="section">Projects</h2>
+  <div id="cards"></div>
+
+  <footer>Luna keeps this updated · v1</footer>
+</div>
+
+<script>
+/* ============================================================
+   EDIT ME — update this data, hit refresh, commit, push.
+   status: "live" | "building" | "planning"
+   ============================================================ */
+const DATA = {
+  updatedAt: "Oct 6, 2026 · 3:30 AM ET",
+  activity: [
+    { text: "OMDb backfill hit 5,506 / 12,482 films — 3 API keys running", time: "Oct 6 · 3:20 AM", tone: "live-dot" },
+    { text: "Second Guess site redesign started — weekly brief becomes the homepage hero", time: "Oct 6 · 3:30 AM", tone: "" },
+    { text: "AP voter tracker “whoa” upgrade plan done — narrative briefs, playoff simulator, bias fingerprints, share cards", time: "Oct 6 · 3:25 AM", tone: "plan-dot" },
+    { text: "Second Guess CFB technical plan done — free models exist, ~80% engine reuse, 1–2 week build", time: "Oct 6 · 3:25 AM", tone: "plan-dot" },
+    { text: "Week 5 NFL brief built — Coen coach of the week, Quinn blunder of the week, Buffalo 25-second swing", time: "Oct 6 · 3:25 AM", tone: "" },
+    { text: "2 new OMDb API keys activated (jtivhas, notjtiv) — 3,000 req/day total", time: "Oct 6 · 3:00 AM", tone: "live-dot" },
+  ],
+  projects: [
+    {
+      name: "Consensus",
+      tagline: "Movie consensus app",
+      status: "live", statusLabel: "Live",
+      recent: "V1/V2 tabs, score-model dial, Cult Consensus page live. PR #5 (score normalization) pending review.",
+      next: "OMDb backfill improving critic coverage (5,506 / 12,482 films)",
+      links: [
+        { label: "Open app", url: "https://consensus-kohl.vercel.app/", primary: true },
+        { label: "Repo", url: "https://github.com/onebeerjt/consensus" },
+      ],
+    },
+    {
+      name: "Movie Data Pipeline",
+      tagline: "Daily data ingestion",
+      status: "building", statusLabel: "Building",
+      recent: "3 OMDb API keys active, 5,506 films processed. Daily workflow green.",
+      next: "Clear backlog (~7k films remaining)",
+      links: [
+        { label: "Repo", url: "https://github.com/onebeerjt/moviedata" },
+      ],
+    },
+    {
+      name: "AP Voter Tracker",
+      tagline: "College football poll bias",
+      status: "live", statusLabel: "Live",
+      recent: "85 voters, 1,534 ballots. Tie handling fixed.",
+      next: "“Whoa” upgrade — narrative briefs, playoff simulator, bias fingerprints, share cards",
+      links: [
+        { label: "Open app", url: "https://ap-voter-tracker.vercel.app/", primary: true },
+        { label: "Repo", url: "https://github.com/onebeerjt/ap-voter-tracker" },
+      ],
+    },
+    {
+      name: "Second Guess NFL",
+      tagline: "Coach decision grading",
+      status: "building", statusLabel: "Building",
+      recent: "Week 5 brief: Coen coach of the week, Quinn blunder of the week, Buffalo 25-second swing.",
+      next: "Site redesign — weekly brief hero, “points left on the table” metric",
+      links: [
+        { label: "Open site", url: "https://secondguess.vercel.app", primary: true },
+        { label: "Repo", url: "https://github.com/marinoinfantryskate/second-guess" },
+      ],
+    },
+    {
+      name: "Second Guess CFB",
+      tagline: "College coach grading",
+      status: "planning", statusLabel: "Planning",
+      recent: "Technical plan complete — free CFB models (sportsdataverse-py), ~80% engine reuse.",
+      next: "Build data connector + top-50 filter",
+      links: [],
+    },
+    {
+      name: "Marino Infantry",
+      tagline: "Business website",
+      status: "planning", statusLabel: "Planning",
+      recent: "Instagram archive scoped as feature #1.",
+      next: "Define feature #2",
+      links: [
+        { label: "Repo", url: "https://github.com/marinoinfantryskate/marino-infantry" },
+      ],
+    },
+  ],
+};
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function render() {
+  document.getElementById("updated-at").textContent = "Updated " + DATA.updatedAt;
+
+  document.getElementById("feed").innerHTML = DATA.activity.map(a =>
+    `<li class="${esc(a.tone || "")}">${esc(a.text)}<span class="t">${esc(a.time)}</span></li>`
+  ).join("");
+
+  document.getElementById("cards").innerHTML = DATA.projects.map(p => `
+    <article class="card">
+      <div class="card-head">
+        <div>
+          <h3>${esc(p.name)}</h3>
+          <p class="desc">${esc(p.tagline)}</p>
+        </div>
+        <span class="badge ${esc(p.status)}">${esc(p.statusLabel)}</span>
+      </div>
+      <div class="meta">
+        <div class="row"><span class="k">Recent</span><span class="v dim">${esc(p.recent)}</span></div>
+        <div class="row"><span class="k">Next</span><span class="v">${esc(p.next)}</span></div>
+      </div>
+      ${p.links && p.links.length ? `<div class="links">${p.links.map(l =>
+        `<a href="${esc(l.url)}" class="${l.primary ? "primary" : ""}">${esc(l.label)} ↗</a>`
+      ).join("")}</div>` : ""}
+    </article>
+  `).join("");
+}
+
+document.getElementById("refresh").addEventListener("click", () => {
+  render();
+  const b = document.getElementById("refresh");
+  b.textContent = "✓ Refreshed";
+  setTimeout(() => b.textContent = "↻ Refresh", 1200);
+});
+
+render();
+</script>
+</body>
+</html>
