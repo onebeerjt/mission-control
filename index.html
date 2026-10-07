@@ -91,6 +91,7 @@ footer{margin-top:26px;text-align:center;font-size:12px;color:var(--dim)}
     <div class="updated"><span id="updated-at">—</span></div>
   </div>
   <nav class="switch" id="switch"></nav>
+  <div class="wrap" style="padding-top:8px"><input id="q" placeholder="Filter projects…" style="width:100%;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:14px"></div>
 </header>
 <div class="wrap"><div id="view"></div>
 <footer>Luna keeps this updated · v2</footer></div>
@@ -194,7 +195,7 @@ const stName = {live:"Live",building:"Building",planning:"Planning",blocked:"Blo
 
 const VIEWS = [
 /* 1 — Command deck */
-{id:"deck",label:"Deck",render(){return `<h2 class="sec">All projects · tap for site</h2>`+PROJECTS.map(p=>{
+{id:"deck",label:"Deck",render(){return `<h2 class="sec">All projects · tap for site</h2>`+FP().map(p=>{
  const inner=`<div class="row">${dot(p.status)}
   <div class="grow"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.last)}</div>
    <div style="margin-top:6px;display:flex;gap:8px;align-items:center"><div style="flex:1">${bar(p.progress,p.status==="live"?"g":p.status==="blocked"?"r":"a")}</div><div style="flex:0 0 56px">${spark(p.spark)}</div></div></div>
@@ -203,7 +204,7 @@ const VIEWS = [
 /* 2 — Kanban */
 {id:"kanban",label:"Kanban",render(){const cols=["live","building","planning","blocked"];
  return `<h2 class="sec">By status — swipe →</h2><div class="kanban">`+cols.map(c=>{
-  const ps=PROJECTS.filter(p=>p.status===c);
+  const ps=FP().filter(p=>p.status===c);
   return `<div class="kcol"><h4>${stName[c]} · ${ps.length}</h4>`+ps.map(p=>
    `<div class="kcard"><b>${esc(p.name)}</b><span class="dim">${esc(p.next)}</span>
     <div style="margin-top:8px">${bar(p.progress,c==="live"?"g":c==="blocked"?"r":"a")}</div></div>`).join("")+`</div>`}).join("")+`</div>`}},
@@ -217,24 +218,24 @@ const VIEWS = [
  const cell=v=>{const a=v>=9?"rgba(34,197,94,.95)":v>=6?"rgba(34,197,94,.55)":v>=3?"rgba(245,158,11,.5)":v>=1?"rgba(245,158,11,.22)":"var(--line)";
   return `<div class="hcell" style="background:${a}"></div>`};
  return `<h2 class="sec">7-day activity</h2><div class="heat"><div></div>${days.map(d=>`<div class="hd">${d}</div>`).join("")}</div>`+
- PROJECTS.map(p=>`<div class="heat"><div class="hn">${esc(p.name)}</div>${p.spark.map(cell).join("")}</div>`).join("")+
+ FP().map(p=>`<div class="heat"><div class="hn">${esc(p.name)}</div>${p.spark.map(cell).join("")}</div>`).join("")+
  `<p class="dim small" style="margin-top:10px">Darker = quieter · green = shipping</p>`}},
 /* 5 — Terminal */
-{id:"term",label:"Terminal",render(){const line=PROJECTS.map(p=>{
+{id:"term",label:"Terminal",render(){const line=FP().map(p=>{
   const c=p.status==="live"?"#22c55e":p.status==="building"?"#f59e0b":p.status==="blocked"?"#ef4444":"#8b93a1";
   const s=p.status==="live"?"● LIVE":p.status==="building"?"● BUILD":p.status==="blocked"?"● BLOCK":"○ PLAN";
   return `<span style="color:${c}">${s}</span>  ${esc(p.name.padEnd(18))} ${esc(String(p.progress).padStart(3))}%  ${esc(p.next.slice(0,40))}`}).join("\n");
  return `<h2 class="sec">$ mc status</h2><div class="term">${line}</div>
  <p class="dim small">$ mc feed — see Feed view · ${PROJECTS.length} projects tracked</p>`}},
 /* 6 — Momentum leaderboard */
-{id:"board",label:"Leaderboard",render(){const ps=[...PROJECTS].sort((a,b)=>b.momentum-a.momentum);
+{id:"board",label:"Leaderboard",render(){const ps=[...FP()].sort((a,b)=>b.momentum-a.momentum);
  return `<h2 class="sec">Ranked by momentum</h2>`+ps.map((p,i)=>`
  <div class="lb-row"><div class="lb-rank">${i+1}</div>${dot(p.status)}
   <div class="grow"><div class="nm" style="font-weight:700">${esc(p.name)}</div>
    <div class="sub dim small">${esc(p.last)}</div></div>
   <div class="pct" style="font-weight:700">${p.momentum}</div></div>`).join("")}},
 /* 7 — Story cards */
-{id:"story",label:"Stories",render(){return `<h2 class="sec">Why each one matters</h2>`+PROJECTS.map(p=>`
+{id:"story",label:"Stories",render(){return `<h2 class="sec">Why each one matters</h2>`+FP().map(p=>`
  <div class="card story"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
   <b>${esc(p.name)}</b><span class="tag">${stName[p.status]}</span></div>
   <div class="why">${esc(p.blurb)}. <span style="color:var(--ink)">Latest:</span> ${esc(p.last)}.
@@ -242,7 +243,7 @@ const VIEWS = [
   ${p.url?`<a class="btn ghost" href="${p.url}">Open ↗</a>`:""} </div>`).join("");}},
 /* 8 — Health check */
 {id:"health",label:"Health",render(){const ax=[["Progress","progress"],["Momentum","momentum"]];
- return `<h2 class="sec">Two-axis health</h2>`+PROJECTS.map(p=>`
+ return `<h2 class="sec">Two-axis health</h2>`+FP().map(p=>`
  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
   <b>${esc(p.name)}</b>${dot(p.status)}</div>
   ${ax.map(([l,k])=>`<div style="margin-top:8px"><div class="small dim" style="margin-bottom:4px">${l} · ${p[k]}%</div>${bar(p[k],p[k]>70?"g":p[k]>35?"a":"r")}</div>`).join("")}
@@ -250,7 +251,7 @@ const VIEWS = [
 /* 9 — Feed first */
 {id:"feed",label:"Feed",render(){return `<h2 class="sec">Happening now</h2>`+FEED.map(f=>`
  <div class="fitem">${esc(f.t)}<div class="ft">${esc(f.w)} ET</div></div>`).join("")+
- `<h2 class="sec">All projects</h2>`+PROJECTS.map(p=>
+ `<h2 class="sec">All projects</h2>`+FP().map(p=>
  `<div class="row">${dot(p.status)}<div class="grow"><div class="nm">${esc(p.name)}</div></div>
   <div class="pct">${p.progress}%</div></div>`).join("");}},
 /* 10 — War room */
@@ -264,12 +265,16 @@ const VIEWS = [
   <div class="kpi"><b style="color:var(--blocked)">${attn.length}</b><span>need JT</span></div></div>
  <h2 class="sec">Needs JT</h2>`+attn.map(p=>`
  <div class="card attn"><b>${esc(p.name)}</b><div class="small mut" style="margin-top:4px">${esc(p.next)}</div></div>`).join("")+
- `<h2 class="sec">Momentum top 5</h2>`+[...PROJECTS].sort((a,b)=>b.momentum-a.momentum).slice(0,5).map(p=>`
+ `<h2 class="sec">Momentum top 5</h2>`+[...FP()].sort((a,b)=>b.momentum-a.momentum).slice(0,5).map(p=>`
  <div class="row">${dot(p.status)}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.last)}</div></div>
   <div class="pct">${p.momentum}</div></div>`).join("")}},
 ];
 /* ============ SHELL ============ */
 let cur = (location.hash||"").slice(1) || localStorage.getItem("mc-view") || "deck";
+let Q = "";
+function matches(p){ if(!Q) return true; const q=Q.toLowerCase();
+ return (p.name+" "+p.blurb+" "+p.last+" "+p.next+" "+p.tag).toLowerCase().includes(q); }
+const FP = () => PROJECTS.filter(matches);
 function go(id){cur=id;localStorage.setItem("mc-view",id);
  if(location.hash!=="#"+id) history.replaceState(null,"","#"+id);
  document.getElementById("switch").innerHTML=VIEWS.map(v=>
@@ -280,6 +285,7 @@ function go(id){cur=id;localStorage.setItem("mc-view",id);
  window.scrollTo({top:0});}
 document.getElementById("switch").addEventListener("click",e=>{
  const b=e.target.closest("[data-v]"); if(b) go(b.dataset.v);});
+document.getElementById("q").addEventListener("input",e=>{Q=e.target.value;go(cur);});
 if(!VIEWS.find(x=>x.id===cur)) cur="deck";
 go(cur);
 </script>
