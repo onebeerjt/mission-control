@@ -197,7 +197,7 @@ const VIEWS = [
 {id:"deck",label:"Deck",render(){return `<h2 class="sec">All projects · tap for site</h2>`+PROJECTS.map(p=>{
  const inner=`<div class="row">${dot(p.status)}
   <div class="grow"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.last)}</div>
-   <div style="margin-top:6px">${bar(p.progress,p.status==="live"?"g":p.status==="blocked"?"r":"a")}</div></div>
+   <div style="margin-top:6px;display:flex;gap:8px;align-items:center"><div style="flex:1">${bar(p.progress,p.status==="live"?"g":p.status==="blocked"?"r":"a")}</div><div style="flex:0 0 56px">${spark(p.spark)}</div></div></div>
   <div class="pct">${p.progress}%</div></div>`;
  return p.url?`<a href="${p.url}" style="color:inherit">${inner}</a>`:inner;}).join("")}},
 /* 2 — Kanban */
@@ -269,8 +269,9 @@ const VIEWS = [
   <div class="pct">${p.momentum}</div></div>`).join("")}},
 ];
 /* ============ SHELL ============ */
-let cur = localStorage.getItem("mc-view") || "deck";
+let cur = (location.hash||"").slice(1) || localStorage.getItem("mc-view") || "deck";
 function go(id){cur=id;localStorage.setItem("mc-view",id);
+ if(location.hash!=="#"+id) history.replaceState(null,"","#"+id);
  document.getElementById("switch").innerHTML=VIEWS.map(v=>
   `<button class="sw${v.id===id?" on":""}" data-v="${v.id}">${v.label}</button>`).join("");
  const v=VIEWS.find(x=>x.id===id);
