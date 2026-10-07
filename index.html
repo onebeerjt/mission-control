@@ -6,258 +6,281 @@
 <meta name="theme-color" content="#0b0c0e">
 <title>Mission Control</title>
 <style>
-  :root {
-    --bg: #0b0c0e;
-    --card: #14161a;
-    --card-2: #1a1d22;
-    --line: #24272e;
-    --ink: #f2f3f5;
-    --muted: #9aa0ab;
-    --dim: #6b717c;
-    --live: #22c55e;
-    --building: #f59e0b;
-    --planning: #8b93a1;
-    --accent: #5ea9ff;
-    --radius: 14px;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", sans-serif;
-    font-size: 15px; line-height: 1.5;
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
-  }
-  a { color: var(--accent); text-decoration: none; }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
-
-  header.top {
-    position: sticky; top: 0; z-index: 10;
-    background: rgba(11,12,14,.92); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
-    padding: calc(14px + env(safe-area-inset-top)) 0 12px;
-  }
-  header.top .wrap { display: flex; align-items: center; justify-content: space-between; }
-  .brand h1 {
-    margin: 0; font-size: 22px; font-weight: 800; letter-spacing: .04em;
-    text-transform: uppercase;
-  }
-  .brand h1 .dot { color: var(--building); }
-  .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
-  .updated { font-size: 11px; color: var(--dim); text-align: right; line-height: 1.4; }
-  .updated button {
-    display: inline-block; margin-top: 4px;
-    background: var(--card-2); color: var(--ink);
-    border: 1px solid var(--line); border-radius: 999px;
-    font-size: 12px; font-weight: 600; padding: 8px 14px; cursor: pointer;
-    min-height: 36px;
-  }
-  .updated button:active { background: var(--line); }
-
-  h2.section {
-    font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
-    color: var(--dim); margin: 26px 0 10px; font-weight: 700;
-  }
-
-  /* Activity feed */
-  .feed { list-style: none; margin: 0; padding: 0; }
-  .feed li {
-    position: relative; padding: 0 0 14px 26px; font-size: 14px;
-  }
-  .feed li::before {
-    content: ""; position: absolute; left: 7px; top: 6px;
-    width: 8px; height: 8px; border-radius: 50%; background: var(--building);
-  }
-  .feed li.live-dot::before { background: var(--live); }
-  .feed li.plan-dot::before { background: var(--planning); }
-  .feed li::after {
-    content: ""; position: absolute; left: 10.5px; top: 18px; bottom: -2px;
-    width: 1px; background: var(--line);
-  }
-  .feed li:last-child::after { display: none; }
-  .feed .t { color: var(--dim); font-size: 12px; display: block; margin-top: 1px; }
-
-  /* Project cards */
-  .card {
-    background: var(--card); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
-  }
-  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-  .card h3 { margin: 0; font-size: 17px; font-weight: 700; }
-  .card .desc { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
-  .badge {
-    flex-shrink: 0; font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .08em; padding: 5px 10px; border-radius: 999px;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .badge.live { color: var(--live); background: rgba(34,197,94,.12); }
-  .badge.building { color: var(--building); background: rgba(245,158,11,.12); }
-  .badge.planning { color: var(--planning); background: rgba(139,147,161,.14); }
-  .meta { margin-top: 12px; display: grid; gap: 8px; }
-  .meta .row { display: flex; gap: 8px; font-size: 13.5px; align-items: baseline; }
-  .meta .k {
-    flex-shrink: 0; width: 74px; font-size: 11px; text-transform: uppercase;
-    letter-spacing: .08em; color: var(--dim); font-weight: 700; padding-top: 2px;
-  }
-  .meta .v { color: var(--ink); }
-  .meta .v.dim { color: var(--muted); }
-  .links { display: flex; gap: 8px; margin-top: 14px; }
-  .links a {
-    flex: 1; text-align: center;
-    background: var(--card-2); border: 1px solid var(--line); color: var(--ink);
-    border-radius: 10px; padding: 12px 8px; font-size: 14px; font-weight: 600;
-    min-height: 48px; display: flex; align-items: center; justify-content: center;
-  }
-  .links a:active { background: var(--line); }
-  .links a.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-  footer { margin-top: 28px; text-align: center; font-size: 12px; color: var(--dim); }
+:root{
+  --bg:#0b0c0e; --card:#14161a; --card2:#1a1d22; --line:#24272e;
+  --ink:#f2f3f5; --muted:#9aa0ab; --dim:#6b717c;
+  --live:#22c55e; --build:#f59e0b; --plan:#8b93a1; --blocked:#ef4444;
+  --accent:#5ea9ff; --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",sans-serif;
+  font-size:15px;line-height:1.45;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:720px;margin:0 auto;padding:0 14px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(11,12,14,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 0 10px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.brand h1 .dot{color:var(--build)}
+.brand p{margin:1px 0 0;font-size:11px;color:var(--dim)}
+.updated{font-size:11px;color:var(--dim);text-align:right}
+.switch{display:flex;gap:8px;overflow-x:auto;padding:10px 14px 4px;max-width:720px;margin:0 auto;scrollbar-width:none}
+.switch::-webkit-scrollbar{display:none}
+.sw{flex:0 0 auto;font-size:12.5px;font-weight:700;padding:9px 13px;border-radius:999px;
+  background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;white-space:nowrap}
+.sw.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+h2.sec{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin:22px 0 10px;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.dot.live{background:var(--live);box-shadow:0 0 8px rgba(34,197,94,.7)}
+.dot.building{background:var(--build);box-shadow:0 0 8px rgba(245,158,11,.7)}
+.dot.planning{background:var(--plan)}
+.dot.blocked{background:var(--blocked);box-shadow:0 0 8px rgba(239,68,68,.7)}
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.bar>i.g{background:var(--live)} .bar>i.a{background:var(--build)} .bar>i.r{background:var(--blocked)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.mut{color:var(--muted)} .dim{color:var(--dim)} .small{font-size:12.5px}
+.row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.row .nm{font-weight:700;font-size:14.5px}
+.row .sub{font-size:12px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .grow{flex:1;min-width:0}
+.row .pct{font-size:12px;font-weight:700;color:var(--muted);min-width:38px;text-align:right}
+.kanban{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
+.kcol{flex:0 0 228px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+.kcol h4{margin:2px 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.kcard{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:13px}
+.kcard b{display:block;font-size:13.5px;margin-bottom:2px}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-ev{position:relative;padding:0 0 16px}
+.tl-ev::before{content:"";position:absolute;left:-19px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--build);border:2px solid var(--bg)}
+.tl-ev.done::before{background:var(--live)}
+.heat{display:grid;grid-template-columns:minmax(0,1fr) repeat(7,22px);gap:4px;align-items:center;font-size:12px;margin-bottom:6px}
+.heat .hd{font-size:10px;color:var(--dim);text-align:center}
+.heat .hn{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hcell{width:22px;height:22px;border-radius:5px;background:var(--line)}
+.term{background:#000;border:1px solid var(--line);border-radius:var(--r);padding:14px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.7;overflow-x:auto;white-space:pre}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.lb-rank{font-size:18px;font-weight:800;color:var(--dim);min-width:26px;text-align:center}
+.story{border-left:3px solid var(--accent)}
+.story .why{font-size:13px;color:var(--muted);margin-top:6px}
+.fitem{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;font-size:13.5px}
+.fitem .ft{font-size:11.5px;color:var(--dim);margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center}
+.kpi b{font-size:20px;display:block}
+.kpi span{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+.attn{border-left:3px solid var(--blocked)}
+.attn.ok-l{border-left-color:var(--live)}
+footer{margin-top:26px;text-align:center;font-size:12px;color:var(--dim)}
+.tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);
+  border:1px solid var(--line);border-radius:99px;padding:3px 8px;font-weight:700}
+.btn{display:inline-block;background:var(--ink);color:var(--bg);font-weight:700;font-size:13px;border-radius:10px;padding:10px 16px;margin-top:8px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:26px}
+.spark i{flex:1;min-width:3px;border-radius:2px;background:var(--line)}
 </style>
 </head>
 <body>
-
 <header class="top">
-  <div class="wrap">
-    <div class="brand">
-      <h1>Mission<span class="dot">·</span>Control</h1>
-      <p>Marino's project dashboard</p>
-    </div>
-    <div class="updated">
-      <span id="updated-at">—</span><br>
-      <button id="refresh" type="button">↻ Refresh</button>
-    </div>
+  <div class="wrap hrow">
+    <div class="brand"><h1>Mission<span class="dot">·</span>Control</h1><p>JT's project command · 10 views</p></div>
+    <div class="updated"><span id="updated-at">—</span></div>
   </div>
+  <nav class="switch" id="switch"></nav>
 </header>
-
-<div class="wrap">
-  <h2 class="section">Recent activity</h2>
-  <ul class="feed" id="feed"></ul>
-
-  <h2 class="section">Projects</h2>
-  <div id="cards"></div>
-
-  <footer>Luna keeps this updated · v1</footer>
-</div>
-
+<div class="wrap"><div id="view"></div>
+<footer>Luna keeps this updated · v2</footer></div>
 <script>
-/* ============================================================
-   EDIT ME — update this data, hit refresh, commit, push.
-   status: "live" | "building" | "planning"
-   ============================================================ */
-const DATA = {
-  updatedAt: "Oct 6, 2026 · 3:30 AM ET",
-  activity: [
-    { text: "OMDb backfill hit 5,506 / 12,482 films — 3 API keys running", time: "Oct 6 · 3:20 AM", tone: "live-dot" },
-    { text: "Second Guess site redesign started — weekly brief becomes the homepage hero", time: "Oct 6 · 3:30 AM", tone: "" },
-    { text: "AP voter tracker “whoa” upgrade plan done — narrative briefs, playoff simulator, bias fingerprints, share cards", time: "Oct 6 · 3:25 AM", tone: "plan-dot" },
-    { text: "Second Guess CFB technical plan done — free models exist, ~80% engine reuse, 1–2 week build", time: "Oct 6 · 3:25 AM", tone: "plan-dot" },
-    { text: "Week 5 NFL brief built — Coen coach of the week, Quinn blunder of the week, Buffalo 25-second swing", time: "Oct 6 · 3:25 AM", tone: "" },
-    { text: "2 new OMDb API keys activated (jtivhas, notjtiv) — 3,000 req/day total", time: "Oct 6 · 3:00 AM", tone: "live-dot" },
-  ],
-  projects: [
-    {
-      name: "Consensus",
-      tagline: "Movie consensus app",
-      status: "live", statusLabel: "Live",
-      recent: "V1/V2 tabs, score-model dial, Cult Consensus page live. PR #5 (score normalization) pending review.",
-      next: "OMDb backfill improving critic coverage (5,506 / 12,482 films)",
-      links: [
-        { label: "Open app", url: "https://consensus-kohl.vercel.app/", primary: true },
-        { label: "Repo", url: "https://github.com/onebeerjt/consensus" },
-      ],
-    },
-    {
-      name: "Movie Data Pipeline",
-      tagline: "Daily data ingestion",
-      status: "building", statusLabel: "Building",
-      recent: "3 OMDb API keys active, 5,506 films processed. Daily workflow green.",
-      next: "Clear backlog (~7k films remaining)",
-      links: [
-        { label: "Repo", url: "https://github.com/onebeerjt/moviedata" },
-      ],
-    },
-    {
-      name: "AP Voter Tracker",
-      tagline: "College football poll bias",
-      status: "live", statusLabel: "Live",
-      recent: "85 voters, 1,534 ballots. Tie handling fixed.",
-      next: "“Whoa” upgrade — narrative briefs, playoff simulator, bias fingerprints, share cards",
-      links: [
-        { label: "Open app", url: "https://ap-voter-tracker.vercel.app/", primary: true },
-        { label: "Repo", url: "https://github.com/onebeerjt/ap-voter-tracker" },
-      ],
-    },
-    {
-      name: "Second Guess NFL",
-      tagline: "Coach decision grading",
-      status: "building", statusLabel: "Building",
-      recent: "Week 5 brief: Coen coach of the week, Quinn blunder of the week, Buffalo 25-second swing.",
-      next: "Site redesign — weekly brief hero, “points left on the table” metric",
-      links: [
-        { label: "Open site", url: "https://secondguess.vercel.app", primary: true },
-        { label: "Repo", url: "https://github.com/marinoinfantryskate/second-guess" },
-      ],
-    },
-    {
-      name: "Second Guess CFB",
-      tagline: "College coach grading",
-      status: "planning", statusLabel: "Planning",
-      recent: "Technical plan complete — free CFB models (sportsdataverse-py), ~80% engine reuse.",
-      next: "Build data connector + top-50 filter",
-      links: [],
-    },
-    {
-      name: "Marino Infantry",
-      tagline: "Business website",
-      status: "planning", statusLabel: "Planning",
-      recent: "Instagram archive scoped as feature #1.",
-      next: "Define feature #2",
-      links: [
-        { label: "Repo", url: "https://github.com/marinoinfantryskate/marino-infantry" },
-      ],
-    },
-  ],
-};
+/* ============ DATA — refresh me ============ */
+const UPDATED = "Oct 7, 2026 · 3:35 AM ET";
+const PROJECTS = [
+{id:"consensus",name:"Consensus",tag:"movies",status:"live",url:"https://consensus-kohl.vercel.app/",repo:"onebeerjt/consensus",
+ blurb:"Movie consensus app — V1/V2 score tabs",
+ progress:92,momentum:88,last:"OMDb backfill at 10,256/12,482 films via 5 keys",next:"Finish backfill tonight (~2.2k left)",
+ spark:[4,6,8,9,7,10,9],upd:"3:10 AM"},
+{id:"omdb",name:"OMDb Backfill",tag:"data",status:"building",url:"",repo:"onebeerjt/consensus",
+ blurb:"Critic data for Consensus — 5 API keys",
+ progress:82,momentum:95,last:"+4,750 films overnight (5 keys × 950)",next:"Final run at quota reset finishes it",
+ spark:[2,3,9,10,10,10,10],upd:"2:30 AM"},
+{id:"ygaddie",name:"A$AP ANT TV",tag:"music",status:"live",url:"https://asapant.com/",repo:"onebeerjt/ygaddie-tv",
+ blurb:"Game Boy site — 19 videos, 12 tapes, all-links hub",
+ progress:95,momentum:80,last:"Theater mode + Pokémon next/prev confirm shipped",next:"117/175 tracks inline — match more deep cuts",
+ spark:[8,9,7,10,9,8,6],upd:"Oct 6"},
+{id:"onebeer-io",name:"onebeer.io Desktop",tag:"personal",status:"live",url:"https://onebeer.io/",repo:"onebeerjt/onebeer-desktop",
+ blurb:"macOS-desktop personal site — iPod widget added",
+ progress:90,momentum:85,last:"iPod w/ Last.fm + One Tap clip shipped; domain swap done",next:"Last.fm API keys from JT",
+ spark:[3,2,4,9,10,9,8],upd:"3:15 AM"},
+{id:"onebeer-now",name:"One Beer Blog",tag:"personal",status:"live",url:"https://onebeer.now/",repo:"onebeerjt/onebeer",
+ blurb:"The One Beer blog — films, music, Notion posts",
+ progress:88,momentum:60,last:"Moved to onebeer.now, verified + serving",next:"Write real Notion posts",
+ spark:[5,6,4,3,7,4,2],upd:"Oct 7"},
+{id:"greenhouse",name:"Greenhouse",tag:"tooling",status:"live",url:"https://greenhouse-marino-infantry.vercel.app/",repo:"onebeerjt/greenhouse",
+ blurb:"3D plant tracker + new interactive dashboard",
+ progress:93,momentum:97,last:"Dashboard shipped: side panel, swipe nav, bottom sheet",next:"Hourly auto-updates running",
+ spark:[1,1,2,9,10,10,10],upd:"3:20 AM"},
+{id:"apvoter",name:"AP Voter Tracker",tag:"sports",status:"building",url:"https://ap-voter-tracker.vercel.app/",repo:"onebeerjt/ap-voter-tracker",
+ blurb:"85 voters, 1,534 ballots — viz revamp in flight",
+ progress:70,momentum:90,last:"10-viz revamp started: scatter plots, bias arrows, storytelling",next:"3–4 iterate rounds, then review",
+ spark:[6,7,5,4,3,9,9],upd:"3:26 AM"},
+{id:"secondguess",name:"Second Guess",tag:"sports",status:"building",url:"https://secondguess.vercel.app/",repo:"marinoinfantryskate/second-guess",
+ blurb:"NFL coach-decision grader — redesign PR open",
+ progress:65,momentum:55,last:"Week 5 brief live; redesign PR #1 awaiting JT",next:"JT approves PR → merge",
+ spark:[7,8,6,5,4,3,2],upd:"Oct 6"},
+{id:"marino",name:"Marino Infantry",tag:"business",status:"building",url:"https://www.marinoinfantry.store/",repo:"marinoinfantryskate/marino-infantry",
+ blurb:"Store teaser live; skate game polish in flight",
+ progress:55,momentum:92,last:"Skate game: 5 glitches fixed, new sky/city/rider; gap-game railings next",next:"Gap-game railings cleanup + time-of-day city",
+ spark:[2,1,3,4,6,9,10],upd:"3:22 AM"},
+{id:"filmclub",name:"Film Club Concepts",tag:"film",status:"building",url:"https://miami-film-club-concept.vercel.app/",repo:"onebeerjt/miami-film-club-concept",
+ blurb:"50-tab concept site for Miami Filmgoers",
+ progress:40,momentum:98,last:"16 themes done → 50-tab build kicked off",next:"Review the 50 when built",
+ spark:[1,2,8,9,7,6,10],upd:"3:24 AM"},
+{id:"miamimovies",name:"Miami Movies",tag:"film",status:"live",url:"https://miami-movies.vercel.app/",repo:"onebeerjt/miami-movies",
+ blurb:"120 showtimes across 4 theaters",
+ progress:85,momentum:30,last:"Scraper built; weekly workflow needs JT's GitHub click",next:"JT enables workflow (30 sec)",
+ spark:[8,9,7,3,2,1,1],upd:"Oct 6"},
+{id:"miamievents",name:"Miami Events",tag:"film",status:"building",url:"",repo:"onebeerjt/miami-events",
+ blurb:"Events aggregator redesign",
+ progress:60,momentum:25,last:"Redesign PR #2 open",next:"JT approves → merge",
+ spark:[9,8,4,2,1,1,1],upd:"Oct 6"},
+{id:"gameday",name:"Game Day",tag:"sports",status:"live",url:"https://gameday-jtirrell98gmailcoms-projects.vercel.app/",repo:"onebeerjt/gameday",
+ blurb:"ESPN multi-view command center",
+ progress:90,momentum:20,last:"Live + stable",next:"—",
+ spark:[9,8,2,1,1,1,1],upd:"Oct 5"},
+{id:"rara",name:"RARA",tag:"music",status:"live",url:"https://rara-links.vercel.app/",repo:"onebeerjt/rara-links",
+ blurb:"Link-in-bio",
+ progress:95,momentum:15,last:"Live + stable",next:"Artist list from JT",
+ spark:[8,2,1,1,1,1,1],upd:"Oct 5"},
+{id:"syllabus",name:"JT's Syllabus",tag:"film",status:"live",url:"https://onebeerjt.github.io/syllabus/",repo:"onebeerjt/syllabus",
+ blurb:"Film picks — Letterboxd + Criterion + JustWatch",
+ progress:88,momentum:40,last:"IMDb ratings on every pick; daily JustWatch refresh",next:"Add Consensus scores",
+ spark:[2,3,9,8,4,2,2],upd:"Oct 7"},
+{id:"slate",name:"Slate Replay",tag:"sports",status:"planning",url:"",repo:"marinoinfantryskate/slate-replay",
+ blurb:"Daily MLB betting practice game (idea)",
+ progress:10,momentum:5,last:"Idea captured",next:"Claude Code build when JT says go",
+ spark:[1,1,1,1,1,1,1],upd:"Sep"},
+{id:"slime",name:"Slime Again",tag:"business",status:"planning",url:"",repo:"marinoinfantryskate/make-america-slime-again",
+ blurb:"Merch line w/ checkout (org copy canonical)",
+ progress:45,momentum:10,last:"Checkout work exists in org repo",next:"Decide launch plan",
+ spark:[3,2,1,1,1,1,1],upd:"Oct 3"},
+{id:"warby",name:"Warby Parker",tag:"life",status:"blocked",url:"",repo:"",
+ blurb:"Eye exam booking",
+ progress:20,momentum:10,last:"Needs slot choice + phone + DOB from JT",next:"JT picks a slot",
+ spark:[2,1,1,1,1,1,1],upd:"Oct 6"},
+{id:"esp32",name:"Luna Handheld",tag:"hardware",status:"building",url:"",repo:"",
+ blurb:"Waveshare ESP32-S3 AMOLED — Luna's home",
+ progress:30,momentum:20,last:"Ordered $54.99, arrives Oct 21",next:"Unbox + plan on-device model",
+ spark:[1,1,9,1,1,1,1],upd:"Oct 6"},
+];
+const FEED = [
+ {t:"Greenhouse dashboard shipped — side panel, swipe nav, bottom sheet",w:"3:20 AM"},
+ {t:"Gap-game railings cleanup + time-of-day city sent to Claude",w:"3:25 AM"},
+ {t:"AP voter 10-viz revamp kicked off (iterate 3–4 rounds)",w:"3:26 AM"},
+ {t:"50-tab Filmgoers concept build kicked off",w:"3:24 AM"},
+ {t:"Skate game polish: 5 glitches fixed, sunset skyline, new rider — preview live",w:"3:21 AM"},
+ {t:"onebeer.io live w/ iPod + Last.fm — needs JT's API keys (reminder 9 AM)",w:"3:15 AM"},
+ {t:"OMDb backfill 10,256/12,482 (82%) — final run at quota reset",w:"2:30 AM"},
+ {t:"3 new OMDb keys from JT (2 Gmail + Yahoo)",w:"2:10 AM"},
+];
+/* ============ VIEWS ============ */
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const dot = s => `<span class="dot ${s}"></span>`;
+const bar = (p,cls="") => `<div class="bar"><i class="${cls}" style="width:${p}%"></i></div>`;
+const spark = a => {const m=Math.max(...a,1);return `<div class="spark">${a.map(v=>`<i style="height:${Math.round(v/m*100)}%;${v>=8?"background:var(--live)":v>=5?"background:var(--build)":""}"></i>`).join("")}</div>`};
+const stName = {live:"Live",building:"Building",planning:"Planning",blocked:"Blocked"};
 
-function esc(s) {
-  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-function render() {
-  document.getElementById("updated-at").textContent = "Updated " + DATA.updatedAt;
-
-  document.getElementById("feed").innerHTML = DATA.activity.map(a =>
-    `<li class="${esc(a.tone || "")}">${esc(a.text)}<span class="t">${esc(a.time)}</span></li>`
-  ).join("");
-
-  document.getElementById("cards").innerHTML = DATA.projects.map(p => `
-    <article class="card">
-      <div class="card-head">
-        <div>
-          <h3>${esc(p.name)}</h3>
-          <p class="desc">${esc(p.tagline)}</p>
-        </div>
-        <span class="badge ${esc(p.status)}">${esc(p.statusLabel)}</span>
-      </div>
-      <div class="meta">
-        <div class="row"><span class="k">Recent</span><span class="v dim">${esc(p.recent)}</span></div>
-        <div class="row"><span class="k">Next</span><span class="v">${esc(p.next)}</span></div>
-      </div>
-      ${p.links && p.links.length ? `<div class="links">${p.links.map(l =>
-        `<a href="${esc(l.url)}" class="${l.primary ? "primary" : ""}">${esc(l.label)} ↗</a>`
-      ).join("")}</div>` : ""}
-    </article>
-  `).join("");
-}
-
-document.getElementById("refresh").addEventListener("click", () => {
-  render();
-  const b = document.getElementById("refresh");
-  b.textContent = "✓ Refreshed";
-  setTimeout(() => b.textContent = "↻ Refresh", 1200);
-});
-
-render();
+const VIEWS = [
+/* 1 — Command deck */
+{id:"deck",label:"Deck",render(){return `<h2 class="sec">All projects · tap for site</h2>`+PROJECTS.map(p=>{
+ const inner=`<div class="row">${dot(p.status)}
+  <div class="grow"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.last)}</div>
+   <div style="margin-top:6px">${bar(p.progress,p.status==="live"?"g":p.status==="blocked"?"r":"a")}</div></div>
+  <div class="pct">${p.progress}%</div></div>`;
+ return p.url?`<a href="${p.url}" style="color:inherit">${inner}</a>`:inner;}).join("")}},
+/* 2 — Kanban */
+{id:"kanban",label:"Kanban",render(){const cols=["live","building","planning","blocked"];
+ return `<h2 class="sec">By status — swipe →</h2><div class="kanban">`+cols.map(c=>{
+  const ps=PROJECTS.filter(p=>p.status===c);
+  return `<div class="kcol"><h4>${stName[c]} · ${ps.length}</h4>`+ps.map(p=>
+   `<div class="kcard"><b>${esc(p.name)}</b><span class="dim">${esc(p.next)}</span>
+    <div style="margin-top:8px">${bar(p.progress,c==="live"?"g":c==="blocked"?"r":"a")}</div></div>`).join("")+`</div>`}).join("")+`</div>`}},
+/* 3 — Timeline */
+{id:"timeline",label:"Timeline",render(){const evs=[...FEED];
+ return `<h2 class="sec">Latest first</h2><div class="tl">`+evs.map((e,i)=>
+  `<div class="tl-ev${i<3?" done":""}"><div style="font-weight:600">${esc(e.t)}</div>
+   <div class="dim small">${esc(e.w)}</div></div>`).join("")+`</div>`}},
+/* 4 — Heat grid */
+{id:"heat",label:"Heat",render(){const days=["M","T","W","T","F","S","S"];
+ const cell=v=>{const a=v>=9?"rgba(34,197,94,.95)":v>=6?"rgba(34,197,94,.55)":v>=3?"rgba(245,158,11,.5)":v>=1?"rgba(245,158,11,.22)":"var(--line)";
+  return `<div class="hcell" style="background:${a}"></div>`};
+ return `<h2 class="sec">7-day activity</h2><div class="heat"><div></div>${days.map(d=>`<div class="hd">${d}</div>`).join("")}</div>`+
+ PROJECTS.map(p=>`<div class="heat"><div class="hn">${esc(p.name)}</div>${p.spark.map(cell).join("")}</div>`).join("")+
+ `<p class="dim small" style="margin-top:10px">Darker = quieter · green = shipping</p>`}},
+/* 5 — Terminal */
+{id:"term",label:"Terminal",render(){const line=PROJECTS.map(p=>{
+  const c=p.status==="live"?"#22c55e":p.status==="building"?"#f59e0b":p.status==="blocked"?"#ef4444":"#8b93a1";
+  const s=p.status==="live"?"● LIVE":p.status==="building"?"● BUILD":p.status==="blocked"?"● BLOCK":"○ PLAN";
+  return `<span style="color:${c}">${s}</span>  ${esc(p.name.padEnd(18))} ${esc(String(p.progress).padStart(3))}%  ${esc(p.next.slice(0,40))}`}).join("\n");
+ return `<h2 class="sec">$ mc status</h2><div class="term">${line}</div>
+ <p class="dim small">$ mc feed — see Feed view · ${PROJECTS.length} projects tracked</p>`}},
+/* 6 — Momentum leaderboard */
+{id:"board",label:"Leaderboard",render(){const ps=[...PROJECTS].sort((a,b)=>b.momentum-a.momentum);
+ return `<h2 class="sec">Ranked by momentum</h2>`+ps.map((p,i)=>`
+ <div class="lb-row"><div class="lb-rank">${i+1}</div>${dot(p.status)}
+  <div class="grow"><div class="nm" style="font-weight:700">${esc(p.name)}</div>
+   <div class="sub dim small">${esc(p.last)}</div></div>
+  <div class="pct" style="font-weight:700">${p.momentum}</div></div>`).join("")}},
+/* 7 — Story cards */
+{id:"story",label:"Stories",render(){return `<h2 class="sec">Why each one matters</h2>`+PROJECTS.map(p=>`
+ <div class="card story"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+  <b>${esc(p.name)}</b><span class="tag">${stName[p.status]}</span></div>
+  <div class="why">${esc(p.blurb)}. <span style="color:var(--ink)">Latest:</span> ${esc(p.last)}.
+  <span style="color:var(--ink)">Next:</span> ${esc(p.next)}</div>
+  ${p.url?`<a class="btn ghost" href="${p.url}">Open ↗</a>`:""} </div>`).join("");}},
+/* 8 — Health check */
+{id:"health",label:"Health",render(){const ax=[["Progress","progress"],["Momentum","momentum"]];
+ return `<h2 class="sec">Two-axis health</h2>`+PROJECTS.map(p=>`
+ <div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
+  <b>${esc(p.name)}</b>${dot(p.status)}</div>
+  ${ax.map(([l,k])=>`<div style="margin-top:8px"><div class="small dim" style="margin-bottom:4px">${l} · ${p[k]}%</div>${bar(p[k],p[k]>70?"g":p[k]>35?"a":"r")}</div>`).join("")}
+  <div class="small dim" style="margin-top:8px">Updated ${esc(p.upd)}</div></div>`).join("")}},
+/* 9 — Feed first */
+{id:"feed",label:"Feed",render(){return `<h2 class="sec">Happening now</h2>`+FEED.map(f=>`
+ <div class="fitem">${esc(f.t)}<div class="ft">${esc(f.w)} ET</div></div>`).join("")+
+ `<h2 class="sec">All projects</h2>`+PROJECTS.map(p=>
+ `<div class="row">${dot(p.status)}<div class="grow"><div class="nm">${esc(p.name)}</div></div>
+  <div class="pct">${p.progress}%</div></div>`).join("");}},
+/* 10 — War room */
+{id:"war",label:"War Room",render(){const live=PROJECTS.filter(p=>p.status==="live").length,
+ bld=PROJECTS.filter(p=>p.status==="building").length,
+ attn=PROJECTS.filter(p=>p.status==="blocked"||/JT/.test(p.next));
+ return `<h2 class="sec">Tonight</h2><div class="kpis">
+  <div class="kpi"><b>${PROJECTS.length}</b><span>projects</span></div>
+  <div class="kpi"><b style="color:var(--live)">${live}</b><span>live</span></div>
+  <div class="kpi"><b style="color:var(--build)">${bld}</b><span>building</span></div>
+  <div class="kpi"><b style="color:var(--blocked)">${attn.length}</b><span>need JT</span></div></div>
+ <h2 class="sec">Needs JT</h2>`+attn.map(p=>`
+ <div class="card attn"><b>${esc(p.name)}</b><div class="small mut" style="margin-top:4px">${esc(p.next)}</div></div>`).join("")+
+ `<h2 class="sec">Momentum top 5</h2>`+[...PROJECTS].sort((a,b)=>b.momentum-a.momentum).slice(0,5).map(p=>`
+ <div class="row">${dot(p.status)}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.last)}</div></div>
+  <div class="pct">${p.momentum}</div></div>`).join("")}},
+];
+/* ============ SHELL ============ */
+let cur = localStorage.getItem("mc-view") || "deck";
+function go(id){cur=id;localStorage.setItem("mc-view",id);
+ document.getElementById("switch").innerHTML=VIEWS.map(v=>
+  `<button class="sw${v.id===id?" on":""}" data-v="${v.id}">${v.label}</button>`).join("");
+ const v=VIEWS.find(x=>x.id===id);
+ document.getElementById("view").innerHTML=v.render();
+ document.getElementById("updated-at").textContent="Updated "+UPDATED;
+ window.scrollTo({top:0});}
+document.getElementById("switch").addEventListener("click",e=>{
+ const b=e.target.closest("[data-v]"); if(b) go(b.dataset.v);});
+if(!VIEWS.find(x=>x.id===cur)) cur="deck";
+go(cur);
 </script>
 </body>
 </html>
